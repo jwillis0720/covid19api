@@ -230,7 +230,7 @@ jhu_time = parse_timeline_date_api_json(COVID19Py.COVID19(data_source="jhu").get
 JHU_DF_AGG_COUNTRY = jhu_time.sort_values('confirmed')[::-1].groupby(['Date', 'country']).agg(
     {'lat': 'first', 'lon': 'first', 'confirmed': 'sum', 'deaths': 'sum', 'country_code': 'first'}).reset_index()
 
-world_info = pd.read_csv('country_centroids_az8.csv')
+world_info = pd.read_csv('Data/country_centroids_az8.csv')
 
 manual_lookup_pop = {'Diamond Princess': 2670,
                      'Kosovo': 1810463,
