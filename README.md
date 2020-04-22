@@ -20,3 +20,5 @@ So we can now define a schema and when we access data, GraphQL will need to figu
 [End to End server wiht Apollo blog](https://www.apollographql.com/blog/tutorial-building-a-graphql-server-cddaa023c035)
 
 [Ben Awad Video](https://www.youtube.com/watch?v=RDQyAcvmbpM)
+
+[Full Course](https://www.youtube.com/watch?v=ed8SzALpx1Q)
