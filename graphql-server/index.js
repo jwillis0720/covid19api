@@ -7,7 +7,7 @@ const { resolveAs } = require('graphql-directive-resolve-as');
 const typeDefs = `
    directive @resolveAs(name: String) on FIELD_DEFINITION
    type Query {
-    Countries: [Country]!
+    Countries(id:Int): [Country]!
   }
   type CountryInfo{
       id: Int @resolveAs(name: "_id")
@@ -37,11 +37,27 @@ const typeDefs = `
 `;
 
 
+class NovelCovidAPI extends RESTDataSource {
+    constructor() {
+        super();
+        this.baseURL = 'https://corona.lmao.ninja/v2/';
+    }
+
+    async getCountries(id) {
+        if (id != null) {
+            const data = []
+            data.push(this.get(`countries/${id}`))
+            return data
+        } else {
+            return this.get("countries")
+        }
+    }
+}
+
 const resolvers = {
     Query: {
-        Countries: async () => {
-            const response = await fetch(`https://corona.lmao.ninja/v2/countries`);
-            return response.json()
+        Countries: async (_, { id }, { dataSources }) => {
+            return dataSources.ncapi.getCountries(id)
         }
     }
 
@@ -49,6 +65,11 @@ const resolvers = {
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    dataSources: () => {
+        return {
+            ncapi: new NovelCovidAPI(),
+        }
+    },
     schemaDirectives: {
         resolveAs: resolveAs
     },
