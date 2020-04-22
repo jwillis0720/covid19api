@@ -1,0 +1,3 @@
+[submodule "graphql-server/fullstack-tutorial"]
+	path = graphql-server/fullstack-tutorial
+	url = https://github.com/apollographql/fullstack-tutorial.git
