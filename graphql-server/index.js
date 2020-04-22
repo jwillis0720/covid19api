@@ -1,51 +1,62 @@
 const { ApolloServer, gql } = require('apollo-server');
+const fetch = require("node-fetch");
+const { RESTDataSource } = require('apollo-datasource-rest');
+const { resolveAs } = require('graphql-directive-resolve-as');
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const typeDefs = gql`
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+const typeDefs = `
+   directive @resolveAs(name: String) on FIELD_DEFINITION
+   type Query {
+    Countries: [Country]!
   }
-
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
+  type CountryInfo{
+      id: Int @resolveAs(name: "_id")
+      iso2: String
+      iso3: String
+      lat: Float
+      long: Float
+      flag: String
+  }
+  type Country {
+      name: String @resolveAs(name: "country")
+      updated: Float,
+      info: CountryInfo @resolveAs(name: "countryInfo") 
+      cummulativeCases: Int @resolveAs(name: "cases")
+      todayCases: Int,
+      cummulativeDeaths: Int @resolveAs(name: "deaths")
+      todayDeaths: Int,
+      recovered: Int,
+      active: Int,
+      critical: Int,
+      casesPerOneMillion: Int,
+      deathsPerOneMillion: Int,
+      tests: Int,
+      testsPerOneMillion: Int,
+      continent: String
   }
 `;
 
-const books = [
-    {
-      title: 'Harry Potter and the Chamber of Secrets',
-      author: 'J.K. Rowling',
-    },
-    {
-      title: 'Jurassic Park',
-      author: 'Michael Crichton',
-    },
-  ];
 
-
-// Resolvers define the technique for fetching the types defined in the
-// schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
     Query: {
-      books: () => books,
+        Countries: async () => {
+            const response = await fetch(`https://corona.lmao.ninja/v2/countries`);
+            return response.json()
+        }
+    }
+
+}
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    schemaDirectives: {
+        resolveAs: resolveAs
     },
-  };
+    tracing: true
+})
 
 
-  // The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-const server = new ApolloServer({ typeDefs, resolvers });
-
-// The `listen` method launches a web server.
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+// Launch the server
+server.listen(4000).then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`);
+})
