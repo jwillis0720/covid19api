@@ -403,9 +403,9 @@ MASTER_ALL['per_capita_CSize'] = pd.cut(MASTER_ALL['per_capita_confirmed'],
 MASTER_ALL['per_capita_DSize'] = pd.cut(MASTER_ALL['per_capita_deaths'],
                                         bins=ret_bins, labels=labels).astype(float).fillna(0)
 MASTER_ALL['per_capita_CColor'] = pd.cut(MASTER_ALL['per_capita_confirmed'], bins=ret_bins,
-                                         labels=yellows[2:]).astype(str).replace({'nan': 'white'})
+                                         labels=yellows[1:]).astype(str).replace({'nan': 'white'})
 MASTER_ALL['per_capita_DColor'] = pd.cut(MASTER_ALL['per_capita_deaths'], bins=ret_bins,
-                                         labels=reds[2:]).astype(str).replace({'nan': 'white'})
+                                         labels=reds[1:]).astype(str).replace({'nan': 'white'})
 
 print('writing')
 MASTER_ALL.to_pickle('Data/MASTER_ALL_NEW.pkl', compression='gzip')
