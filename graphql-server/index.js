@@ -73,7 +73,7 @@ const server = new ApolloServer({
     schemaDirectives: {
         resolveAs: resolveAs
     },
-    tracing: true
+    tracing: false
 })
 
 
