@@ -31,36 +31,22 @@ class NovelCovidAPI extends RESTDataSource {
     async getTimeLinebyCountry(iso3) {
         console.log(iso3)
         const response = await this.get(`historical/${iso3}?lastdays=all`)
-        console.log(response)
-        //need this
-        //    type TimeLine{
-        //     date: String
-        //     cases: Int
-        //     deaths: Int
-        //     recovered: Int
-        //     fips: Int
-        // }
+        const restructured = []
+        let cases_d = response.timeline.cases
+        let deaths_d = response.timeline.deaths
+        let recovered_d = response.timeline.recovered
+        const keys = Object.keys(cases_d);
+        keys.forEach(function (key) {
+            restructured.push(
+                {
+                    date: key,
+                    cases: cases_d[key],
+                    deaths: deaths_d[key],
+                    recovered: recovered_d[key]
+                });
+        });
 
-        //from this
-        // {
-        //     country: 'Brazil',
-        //     provinces: [ 'mainland' ],
-        //     timeline: {
-        //       cases: {
-        //         '1/22/20': 0,
-        //         '1/23/20': 0,
-        //         '1/24/20': 0,
-        //         '1/25/20': 0,
-        //         '1/26/20': 0,
-        //         '1/27/20': 0,
-        //         '1/28/20': 0,
-        //         '1/29/20': 0,
-        //         '1/30/20': 0,
-        //         '1/31/20': 0,
-        //         '2/1/20': 0,
-
-
-
+        return restructured
     }
 
     async getTimeLinebyState(name) {

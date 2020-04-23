@@ -1,705 +1,292 @@
-const test_dat = [
-    {
-        date: '2020-01-21',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-22',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-23',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-24',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-24',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-25',
-        state: 'California',
-        fips: '06',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-25',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-25',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-26',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-26',
-        state: 'California',
-        fips: '06',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-26',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-26',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-27',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-27',
-        state: 'California',
-        fips: '06',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-27',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-27',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-28',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-28',
-        state: 'California',
-        fips: '06',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-28',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-28',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-29',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-29',
-        state: 'California',
-        fips: '06',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-29',
-        state: 'Illinois',
-        fips: '17',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-29',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-30',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-30',
-        state: 'California',
-        fips: '06',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-30',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-30',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-31',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-01-31',
-        state: 'California',
-        fips: '06',
-        cases: 3,
-        deaths: 0
-    },
-    {
-        date: '2020-01-31',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-01-31',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-01',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-01',
-        state: 'California',
-        fips: '06',
-        cases: 3,
-        deaths: 0
-    },
-    {
-        date: '2020-02-01',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-01',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-01',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-02',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-02',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-02',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-02',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-02',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-03',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-03',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-03',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-03',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-03',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-04',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-04',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-04',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-04',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-04',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-05',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-06',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-07',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-08',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'California',
-        fips: '06',
-        cases: 6,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-09',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'California',
-        fips: '06',
-        cases: 7,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-10',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'California',
-        fips: '06',
-        cases: 7,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-11',
-        state: 'Wisconsin',
-        fips: '55',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'Arizona',
-        fips: '04',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'California',
-        fips: '06',
-        cases: 7,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'Illinois',
-        fips: '17',
-        cases: 2,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'Massachusetts',
-        fips: '25',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'Texas',
-        fips: '48',
-        cases: 1,
-        deaths: 0
-    },
-    {
-        date: '2020-02-12',
-        state: 'Washington',
-        fips: '53',
-        cases: 1,
-        deaths: 0
-    }]
-console.log(test_dat)
+const test_dat = {
+    country: 'Brazil',
+    provinces: ['mainland'],
+    timeline: {
+        cases: {
+            '1/22/20': 0,
+            '1/23/20': 0,
+            '1/24/20': 0,
+            '1/25/20': 0,
+            '1/26/20': 0,
+            '1/27/20': 0,
+            '1/28/20': 0,
+            '1/29/20': 0,
+            '1/30/20': 0,
+            '1/31/20': 0,
+            '2/1/20': 0,
+            '2/2/20': 0,
+            '2/3/20': 0,
+            '2/4/20': 0,
+            '2/5/20': 0,
+            '2/6/20': 0,
+            '2/7/20': 0,
+            '2/8/20': 0,
+            '2/9/20': 0,
+            '2/10/20': 0,
+            '2/11/20': 0,
+            '2/12/20': 0,
+            '2/13/20': 0,
+            '2/14/20': 0,
+            '2/15/20': 0,
+            '2/16/20': 0,
+            '2/17/20': 0,
+            '2/18/20': 0,
+            '2/19/20': 0,
+            '2/20/20': 0,
+            '2/21/20': 0,
+            '2/22/20': 0,
+            '2/23/20': 0,
+            '2/24/20': 0,
+            '2/25/20': 0,
+            '2/26/20': 1,
+            '2/27/20': 1,
+            '2/28/20': 1,
+            '2/29/20': 2,
+            '3/1/20': 2,
+            '3/2/20': 2,
+            '3/3/20': 2,
+            '3/4/20': 4,
+            '3/5/20': 4,
+            '3/6/20': 13,
+            '3/7/20': 13,
+            '3/8/20': 20,
+            '3/9/20': 25,
+            '3/10/20': 31,
+            '3/11/20': 38,
+            '3/12/20': 52,
+            '3/13/20': 151,
+            '3/14/20': 151,
+            '3/15/20': 162,
+            '3/16/20': 200,
+            '3/17/20': 321,
+            '3/18/20': 372,
+            '3/19/20': 621,
+            '3/20/20': 793,
+            '3/21/20': 1021,
+            '3/22/20': 1546,
+            '3/23/20': 1924,
+            '3/24/20': 2247,
+            '3/25/20': 2554,
+            '3/26/20': 2985,
+            '3/27/20': 3417,
+            '3/28/20': 3904,
+            '3/29/20': 4256,
+            '3/30/20': 4579,
+            '3/31/20': 5717,
+            '4/1/20': 6836,
+            '4/2/20': 8044,
+            '4/3/20': 9056,
+            '4/4/20': 10360,
+            '4/5/20': 11130,
+            '4/6/20': 12161,
+            '4/7/20': 14034,
+            '4/8/20': 16170,
+            '4/9/20': 18092,
+            '4/10/20': 19638,
+            '4/11/20': 20727,
+            '4/12/20': 22192,
+            '4/13/20': 23430,
+            '4/14/20': 25262,
+            '4/15/20': 28320,
+            '4/16/20': 30425,
+            '4/17/20': 33682,
+            '4/18/20': 36658,
+            '4/19/20': 38654,
+            '4/20/20': 40743,
+            '4/21/20': 43079,
+            '4/22/20': 45757
+        },
+        deaths: {
+            '1/22/20': 0,
+            '1/23/20': 0,
+            '1/24/20': 0,
+            '1/25/20': 0,
+            '1/26/20': 0,
+            '1/27/20': 0,
+            '1/28/20': 0,
+            '1/29/20': 0,
+            '1/30/20': 0,
+            '1/31/20': 0,
+            '2/1/20': 0,
+            '2/2/20': 0,
+            '2/3/20': 0,
+            '2/4/20': 0,
+            '2/5/20': 0,
+            '2/6/20': 0,
+            '2/7/20': 0,
+            '2/8/20': 0,
+            '2/9/20': 0,
+            '2/10/20': 0,
+            '2/11/20': 0,
+            '2/12/20': 0,
+            '2/13/20': 0,
+            '2/14/20': 0,
+            '2/15/20': 0,
+            '2/16/20': 0,
+            '2/17/20': 0,
+            '2/18/20': 0,
+            '2/19/20': 0,
+            '2/20/20': 0,
+            '2/21/20': 0,
+            '2/22/20': 0,
+            '2/23/20': 0,
+            '2/24/20': 0,
+            '2/25/20': 0,
+            '2/26/20': 0,
+            '2/27/20': 0,
+            '2/28/20': 0,
+            '2/29/20': 0,
+            '3/1/20': 0,
+            '3/2/20': 0,
+            '3/3/20': 0,
+            '3/4/20': 0,
+            '3/5/20': 0,
+            '3/6/20': 0,
+            '3/7/20': 0,
+            '3/8/20': 0,
+            '3/9/20': 0,
+            '3/10/20': 0,
+            '3/11/20': 0,
+            '3/12/20': 0,
+            '3/13/20': 0,
+            '3/14/20': 0,
+            '3/15/20': 0,
+            '3/16/20': 0,
+            '3/17/20': 1,
+            '3/18/20': 3,
+            '3/19/20': 6,
+            '3/20/20': 11,
+            '3/21/20': 15,
+            '3/22/20': 25,
+            '3/23/20': 34,
+            '3/24/20': 46,
+            '3/25/20': 59,
+            '3/26/20': 77,
+            '3/27/20': 92,
+            '3/28/20': 111,
+            '3/29/20': 136,
+            '3/30/20': 159,
+            '3/31/20': 201,
+            '4/1/20': 240,
+            '4/2/20': 324,
+            '4/3/20': 359,
+            '4/4/20': 445,
+            '4/5/20': 486,
+            '4/6/20': 564,
+            '4/7/20': 686,
+            '4/8/20': 819,
+            '4/9/20': 950,
+            '4/10/20': 1057,
+            '4/11/20': 1124,
+            '4/12/20': 1223,
+            '4/13/20': 1328,
+            '4/14/20': 1532,
+            '4/15/20': 1736,
+            '4/16/20': 1924,
+            '4/17/20': 2141,
+            '4/18/20': 2354,
+            '4/19/20': 2462,
+            '4/20/20': 2587,
+            '4/21/20': 2741,
+            '4/22/20': 2906
+        },
+        recovered: {
+            '1/22/20': 0,
+            '1/23/20': 0,
+            '1/24/20': 0,
+            '1/25/20': 0,
+            '1/26/20': 0,
+            '1/27/20': 0,
+            '1/28/20': 0,
+            '1/29/20': 0,
+            '1/30/20': 0,
+            '1/31/20': 0,
+            '2/1/20': 0,
+            '2/2/20': 0,
+            '2/3/20': 0,
+            '2/4/20': 0,
+            '2/5/20': 0,
+            '2/6/20': 0,
+            '2/7/20': 0,
+            '2/8/20': 0,
+            '2/9/20': 0,
+            '2/10/20': 0,
+            '2/11/20': 0,
+            '2/12/20': 0,
+            '2/13/20': 0,
+            '2/14/20': 0,
+            '2/15/20': 0,
+            '2/16/20': 0,
+            '2/17/20': 0,
+            '2/18/20': 0,
+            '2/19/20': 0,
+            '2/20/20': 0,
+            '2/21/20': 0,
+            '2/22/20': 0,
+            '2/23/20': 0,
+            '2/24/20': 0,
+            '2/25/20': 0,
+            '2/26/20': 0,
+            '2/27/20': 0,
+            '2/28/20': 0,
+            '2/29/20': 0,
+            '3/1/20': 0,
+            '3/2/20': 0,
+            '3/3/20': 0,
+            '3/4/20': 0,
+            '3/5/20': 0,
+            '3/6/20': 0,
+            '3/7/20': 0,
+            '3/8/20': 0,
+            '3/9/20': 0,
+            '3/10/20': 0,
+            '3/11/20': 0,
+            '3/12/20': 0,
+            '3/13/20': 0,
+            '3/14/20': 0,
+            '3/15/20': 0,
+            '3/16/20': 1,
+            '3/17/20': 2,
+            '3/18/20': 2,
+            '3/19/20': 2,
+            '3/20/20': 2,
+            '3/21/20': 2,
+            '3/22/20': 2,
+            '3/23/20': 2,
+            '3/24/20': 2,
+            '3/25/20': 2,
+            '3/26/20': 6,
+            '3/27/20': 6,
+            '3/28/20': 6,
+            '3/29/20': 6,
+            '3/30/20': 120,
+            '3/31/20': 127,
+            '4/1/20': 127,
+            '4/2/20': 127,
+            '4/3/20': 127,
+            '4/4/20': 127,
+            '4/5/20': 127,
+            '4/6/20': 127,
+            '4/7/20': 127,
+            '4/8/20': 127,
+            '4/9/20': 173,
+            '4/10/20': 173,
+            '4/11/20': 173,
+            '4/12/20': 173,
+            '4/13/20': 173,
+            '4/14/20': 3046,
+            '4/15/20': 14026,
+            '4/16/20': 14026,
+            '4/17/20': 14026,
+            '4/18/20': 14026,
+            '4/19/20': 22130,
+            '4/20/20': 22130,
+            '4/21/20': 22991,
+            '4/22/20': 25318
+        }
+    }
+}
+// console.log(test_dat.timeline.cases)
 
 
 const getMapFromArray = data =>
@@ -713,4 +300,19 @@ const getMapFromArray = data =>
         return acc;
     }, {});
 
-console.log(getMapFromArray(test_dat))
+
+const restructured = []
+let cases_d = test_dat.timeline.cases
+let deaths_d = test_dat.timeline.deaths
+let recovered_d = test_dat.timeline.recovered
+const keys = Object.keys(cases_d);
+keys.forEach(function (key) {
+    restructured.push(
+        {
+            date: key,
+            cases: cases_d[key],
+            deaths: deaths_d[key],
+            recovered: recovered_d[key]
+        });
+});
+console.log(restructured)
