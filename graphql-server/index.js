@@ -23,26 +23,56 @@ class NovelCovidAPI extends RESTDataSource {
         // console.log(res)
         return res
     }
-
-
     async getCountrybyID(id) {
         return this.get(`countries/${id}`)
 
     }
 
+    async getTimeLinebyCountry(iso3) {
+        console.log(iso3)
+        const response = await this.get(`historical/${iso3}?lastdays=all`)
+        console.log(response)
+        //need this
+        //    type TimeLine{
+        //     date: String
+        //     cases: Int
+        //     deaths: Int
+        //     recovered: Int
+        //     fips: Int
+        // }
+
+        //from this
+        // {
+        //     country: 'Brazil',
+        //     provinces: [ 'mainland' ],
+        //     timeline: {
+        //       cases: {
+        //         '1/22/20': 0,
+        //         '1/23/20': 0,
+        //         '1/24/20': 0,
+        //         '1/25/20': 0,
+        //         '1/26/20': 0,
+        //         '1/27/20': 0,
+        //         '1/28/20': 0,
+        //         '1/29/20': 0,
+        //         '1/30/20': 0,
+        //         '1/31/20': 0,
+        //         '2/1/20': 0,
+
+
+
+    }
+
     async getTimeLinebyState(name) {
-        console.log(name)
-        const res = await this.get(`nyt/states/${name}`)
+        // console.log(name)
+        const res = await this.get("nyt/states").then(
+            states => states.filter(
+                state => {
+                    return state.state === name;
+                }
+            ))
         return res
     }
-    // if (id != null) {
-    //     const data = []
-    //     data.push(this.get(`countries/${id}`))
-    //     return data
-    // } else {
-
-    //     // }
-    // }
 }
 
 const resolvers = {
@@ -61,11 +91,21 @@ const resolvers = {
             return dataSources.ncapi.getStatebyName(name)
         }
     },
+
+
     State: {
         timeline: async (state, _, { dataSources }) => {
             return dataSources.ncapi.getTimeLinebyState(state.state)
         }
+    },
+
+    Country: {
+        timeline: async (country, _, { dataSources }) => {
+            let iso3 = country.countryInfo.iso3
+            return dataSources.ncapi.getTimeLinebyCountry(iso3)
+        }
     }
+
 
 }
 const server = new ApolloServer({

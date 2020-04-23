@@ -33,7 +33,11 @@ const typeDefs = gql`
       tests: Int,
       testsPerOneMillion: Int,
       continent: String
+      timeline: [TimeLine]
   }
+
+
+
   type State{
     name: String @resolveAs(name: "state")
     cummulativeCases : Int @resolveAs(name: "cases")
@@ -43,12 +47,13 @@ const typeDefs = gql`
     activeCases: Int @resolveAs(name:"active")
     cummulativeTests: Int @resolveAs(name:"tests")
     testsPerOneMillion: Int
-    timeline:[Timeline]
+    timeline:[TimeLine]
   }
-  type Timeline{
+  type TimeLine{
       date: String
       cases: Int
       deaths: Int
+      recovered: Int
       fips: Int
   }
 `;
