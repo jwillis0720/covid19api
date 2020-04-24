@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-const {gql} = require('apollo-server');
-const {RESTDataSource} = require('apollo-datasource-rest');
-const {GraphQLScalarType} = require('graphql');
-const {Kind} = require('graphql/language');
+const { gql } = require('apollo-server');
+const { RESTDataSource } = require('apollo-datasource-rest');
+const { GraphQLScalarType } = require('graphql');
+const { Kind } = require('graphql/language');
 
 const typeDefs = gql`
    scalar Date
@@ -80,25 +80,30 @@ class NovelCovidAPI extends RESTDataSource {
 
   async getCountries() {
     const response = await this.get('countries');
-    return response.map((obj)=> {
-      return {...obj, datereadable: new Date(obj.updated).toDateString()};
+    return response.map((obj) => {
+      return { ...obj, datereadable: new Date(obj.updated).toDateString() };
     });
   }
 
   async getCountrybyID(id) {
     const response = await this.get(`countries/${id}`);
-    return {...response, datereadable: new Date(response.updated).toDateString()};
+    return { ...response, datereadable: new Date(response.updated).toDateString() };
   }
 
   async getCountryByName(name) {
     const response = await this.get(`countries/${name}?strict=false`);
-    return {...response, datereadable: new Date(response.updated).toDateString()};
+    return { ...response, datereadable: new Date(response.updated).toDateString() };
   }
 
   async getTimeLinebyCountry(id) {
-    // console.log(iso3)
-    const response = await this.get(`historical/${id}?lastdays=all`);
-    const {cases, deaths, recovered} = response.timeline;
+    console.log(id)
+    ///I don't want a bad id breaking the entire api query
+    const response = await this.get(`historical/${id}?lastdays=all`).catch(
+      (err) => console.error("error", err))
+    if (response == undefined) {
+      return []
+    }
+    const { cases, deaths, recovered } = response.timeline;
     const result = Object.keys(cases).map((date) => ({
       date: new Date(date).getTime(),
       datereadable: new Date(date).toDateString(),
@@ -106,7 +111,7 @@ class NovelCovidAPI extends RESTDataSource {
       deaths: deaths[date],
       recovered: recovered[date],
       id: id,
-    }));
+    }))
     return result;
   }
 
@@ -127,54 +132,55 @@ class NovelCovidAPI extends RESTDataSource {
       return {
         ...filtered,
         date: new Date(filtered.date).getTime(),
-        datereadable: new Date(filtered.date).toDateString()};
+        datereadable: new Date(filtered.date).toDateString()
+      };
     });
   }
 }
 
 const resolvers = {
   Query: {
-    AllCountries: async (_parent, _args, {dataSources}) => {
+    AllCountries: async (_parent, _args, { dataSources }) => {
       return dataSources.ncapi.getCountries();
     },
-    CountryByID: async (_, {id}, {dataSources}) => {
+    CountryByID: async (_, { id }, { dataSources }) => {
       return dataSources.ncapi.getCountrybyID(id);
     },
-    CountryByIDs: async (_, {ids}, {dataSources}) => {
+    CountryByIDs: async (_, { ids }, { dataSources }) => {
       return Promise.all(
-          ids.map((id) => dataSources.ncapi.getCountrybyID(id)));
+        ids.map((id) => dataSources.ncapi.getCountrybyID(id)));
     },
-    CountryByName: async (_, {name}, {dataSources}) => {
+    CountryByName: async (_, { name }, { dataSources }) => {
       return dataSources.ncapi.getCountryByName(name);
     },
-    CountryByNames: async (_, {names}, {dataSources}) => {
+    CountryByNames: async (_, { names }, { dataSources }) => {
       return Promise.all(
-          names.map((name) => dataSources.ncapi.getCountryByName(name)));
+        names.map((name) => dataSources.ncapi.getCountryByName(name)));
     },
 
-    States: async (_parent, _args, {dataSources}) => {
+    States: async (_parent, _args, { dataSources }) => {
       return dataSources.ncapi.getStates();
     },
-    State: async (_parent, {name}, {dataSources}) => {
+    State: async (_parent, { name }, { dataSources }) => {
       // console.log(name)
       return dataSources.ncapi.getStatebyName(name);
     },
   },
 
   State: {
-    timeline: async (state, _, {dataSources}) => {
+    timeline: async (state, _, { dataSources }) => {
       return dataSources.ncapi.getTimeLinebyState(state.state);
     },
   },
 
   Country: {
-    timeline: async (country, _, {dataSources}) => {
+    timeline: async (country, _, { dataSources }) => {
       const _id = country.countryInfo._id;
       return dataSources.ncapi.getTimeLinebyCountry(_id);
     },
   },
   TimeLine: {
-    country: async (parent, _, {dataSources}) =>{
+    country: async (parent, _, { dataSources }) => {
       return dataSources.ncapi.getCountrybyID(parent.id);
     },
   },
@@ -198,4 +204,4 @@ const resolvers = {
   }),
 };
 
-module.exports = {typeDefs, resolvers, NovelCovidAPI};
+module.exports = { typeDefs, resolvers, NovelCovidAPI };
