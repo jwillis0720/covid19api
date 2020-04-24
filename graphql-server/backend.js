@@ -97,22 +97,24 @@ class NovelCovidAPI extends RESTDataSource {
 
   async getTimeLinebyCountry(id) {
     console.log(id)
-    ///I don't want a bad id breaking the entire api query
-    const response = await this.get(`historical/${id}?lastdays=all`).catch(
-      (err) => console.error("error", err))
-    if (response == undefined) {
-      return []
-    }
-    const { cases, deaths, recovered } = response.timeline;
-    const result = Object.keys(cases).map((date) => ({
-      date: new Date(date).getTime(),
-      datereadable: new Date(date).toDateString(),
-      cases: cases[date],
-      deaths: deaths[date],
-      recovered: recovered[date],
-      id: id,
-    }))
-    return result;
+    ///I don't want a bad id breaking the entire api query to grind to a halt if results cant resolve
+    const results = this.get(`historical/${id}?lastdays=all`).then((res) => {
+      const { cases, deaths, recovered } = res.timeline;
+      const restructure = Object.keys(cases).map((date) => ({
+        date: new Date(date).getTime(),
+        datereadable: new Date(date).toDateString(),
+        cases: cases[date],
+        deaths: deaths[date],
+        recovered: recovered[date],
+        id: id,
+      }))
+      return restructure;
+    }).catch(
+      (err) => {
+        console.error("error", err)
+        return []
+      })
+    return results
   }
 
   async getStates() {
