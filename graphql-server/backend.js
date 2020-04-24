@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
 const {gql} = require('apollo-server');
@@ -119,16 +120,15 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getTimeLinebyState(name) {
-    const res = await this.get('nyt/states').then(
-        (states) => states.filter(
-            (state) => {
-              return state.state === name;
-            },
-        ).map((filtered) => {
-          return {...filtered, date: new Date(filtered.date).getTime()};
-        }));
-    console.log(res);
-    return res;
+    const response = await this.get('nyt/states');
+    return response.filter((states) => {
+      return states.state === name;
+    }).map((filtered) => {
+      return {
+        ...filtered,
+        date: new Date(filtered.date).getTime(),
+        datereadable: new Date(filtered.date).toDateString()};
+    });
   }
 }
 
