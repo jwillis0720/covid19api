@@ -1,9 +1,14 @@
+/* eslint-disable require-jsdoc */
+
 const {gql} = require('apollo-server');
 const {RESTDataSource} = require('apollo-datasource-rest');
-
+const {GraphQLScalarType} = require('graphql');
+const {Kind} = require('graphql/language');
 
 const typeDefs = gql`
+   scalar Date
    directive @resolveAs(name: String) on FIELD_DEFINITION
+
    type Query {
     AllCountries: [Country]!
     CountryByID(id: Int!) : Country!
@@ -23,7 +28,8 @@ const typeDefs = gql`
   }
   type Country {
       name: ID @resolveAs(name: "country")
-      updated: Float,
+      date: Date @resolveAs(name: "updated"),
+      datereadable: String,
       info: CountryInfo @resolveAs(name: "countryInfo") 
       cummulativeCases: Int @resolveAs(name: "cases")
       todayCases: Int,
@@ -55,7 +61,8 @@ const typeDefs = gql`
   }
   type TimeLine{
       id: ID
-      date: String
+      date: Date
+      datereadable: String
       cases: Int
       deaths: Int
       recovered: Int
@@ -71,15 +78,20 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getCountries() {
-    return this.get('countries');
+    const response = await this.get('countries');
+    return response.map((obj)=> {
+      return {...obj, datereadable: new Date(obj.updated).toDateString()};
+    });
   }
 
   async getCountrybyID(id) {
-    return this.get(`countries/${id}`);
+    const response = await this.get(`countries/${id}`);
+    return {...response, datereadable: new Date(response.updated).toDateString()};
   }
 
   async getCountryByName(name) {
-    return this.get(`countries/${name}?strict=false`);
+    const response = await this.get(`countries/${name}?strict=false`);
+    return {...response, datereadable: new Date(response.updated).toDateString()};
   }
 
   async getTimeLinebyCountry(id) {
@@ -87,7 +99,8 @@ class NovelCovidAPI extends RESTDataSource {
     const response = await this.get(`historical/${id}?lastdays=all`);
     const {cases, deaths, recovered} = response.timeline;
     const result = Object.keys(cases).map((date) => ({
-      date,
+      date: new Date(date).getTime(),
+      datereadable: new Date(date).toDateString(),
       cases: cases[date],
       deaths: deaths[date],
       recovered: recovered[date],
@@ -111,7 +124,10 @@ class NovelCovidAPI extends RESTDataSource {
             (state) => {
               return state.state === name;
             },
-        ));
+        ).map((filtered) => {
+          return {...filtered, date: new Date(filtered.date).getTime()};
+        }));
+    console.log(res);
     return res;
   }
 }
@@ -162,6 +178,24 @@ const resolvers = {
       return dataSources.ncapi.getCountrybyID(parent.id);
     },
   },
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      // We could do lots of stuff here but lets play it by ear
+      console.log('From Client', value);
+      return new Date(value).getTime(); // value from the client
+    },
+    serialize(value) {
+      return value;
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return parseInt(ast.value, 10); // ast value is always in string format
+      }
+      return null;
+    },
+  }),
 };
 
 module.exports = {typeDefs, resolvers, NovelCovidAPI};

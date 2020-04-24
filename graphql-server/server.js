@@ -1,4 +1,3 @@
-/* eslint-disable require-jsdoc */
 const {ApolloServer} = require('apollo-server');
 const {resolveAs} = require('graphql-directive-resolve-as');
 const {typeDefs, resolvers, NovelCovidAPI} = require('./backend');
