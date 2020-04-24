@@ -13,8 +13,12 @@ So we can now define a schema and when we access data, GraphQL will need to figu
 [Ben Awad has a great tutorial about how to do this](https://www.youtube.com/watch?v=RDQyAcvmbpM). He uses Yoga-graphql. I want to use Apollo Server to define my schema since it seems the most stable. Apollo Server has such great documentation. But Ben shows how to link multiple REST definitions. 
 
 ## Resources
+[Building Apollo V2 - Another awesome guide to build a full stack app](https://www.apollographql.com/docs/tutorial/introduction/)
+
 [Building Apollo V2 - Use this awesome guid](https://www.apollographql.com/docs/apollo-server/)
 
 [End to End server wiht Apollo blog](https://www.apollographql.com/blog/tutorial-building-a-graphql-server-cddaa023c035)
 
 [Ben Awad Video](https://www.youtube.com/watch?v=RDQyAcvmbpM)
+
+[Full Course](https://www.youtube.com/watch?v=ed8SzALpx1Q)

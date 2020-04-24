@@ -1,0 +1,42 @@
+{
+    "workbench.colorTheme": "Material Theme Darker High Contrast",
+    "workbench.iconTheme": "material-icon-theme",
+    "terminal.integrated.inheritEnv": false,
+    "cSpell.userWords": [
+        "bioinformatics"
+    ],
+    "window.zoomLevel": 1,
+    "editor.formatOnSave": true,
+    "editor.fontSize": 14,
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#0280bfc4",
+        "statusBar.foreground": "#f7f7f7",
+        "statusBar.noFolderBackground": "#222225",
+        "tab.activeBackground": "#00ffd0",
+        "tab.activeForeground": "#000000",
+        "editor.selectionBackground": "#135564",
+        "editor.selectionHighlightBackground": "#135564"
+    },
+    "liveServer.settings.CustomBrowser": "chrome",
+    "liveServer.settings.donotShowInfoMsg": true,
+    "editor.fontFamily": "\"Meslo LG L DZ for Powerline\",Menlo, Monaco, 'Courier New', monospace",
+    "terminal.integrated.fontSize": 14,
+    "git.autofetch": true,
+    "python.formatting.autopep8Args": [
+        "--max-line-length=120"
+    ],
+    "vim.highlightedyank.enable": true,
+    "vim.easymotionMarkerBackgroundColor": "black",
+    "vim.easymotionMarkerFontWeight": "heavy",
+    "vim.easymotionMarkerForegroundColorOneChar": "white",
+    "vim.easymotionMarkerFontSize": "20",
+    "vim.leader": ",",
+    "vim.searchHighlightColor": "#FF9500",
+    "vim.searchHighlightTextColor": "black",
+    "vim.easymotion": true,
+    "git.confirmSync": false,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "liveSassCompile.settings.generateMap": true,
+    "kite.showWelcomeNotificationOnStartup": false
+}
