@@ -1,1 +1,3 @@
 graphql-server/node_modules/
+graphql-server/test.js
+graphql-server/sandbox/queries.gql
