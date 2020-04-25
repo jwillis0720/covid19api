@@ -57,11 +57,8 @@ class NovelCovidAPI extends RESTDataSource {
     }));
     return result;
   }
-
-
   async getTimeLinebyCountry(countryInfo) {
     // console.log(countryInfo.iso3);
-    // let response = [];
     const potentialIds = [
       countryInfo._id,
       countryInfo.iso3,
@@ -97,12 +94,17 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getStates() {
-    return this.get('states/');
+    // /Everything from this API comes from the USA
+    const response = await this.get('states/');
+    return response.map((state) => {
+      return {...state, 'parentcountry': 'USA'};
+    });
   }
 
   async getStatebyName(name) {
+    // /Everything from this API comes from the USA
     const res = await this.get(`states/${name}`);
-    return res;
+    return {...res, 'parentcountry': 'USA'};
   }
 
   async getTimeLinebyState(name) {
@@ -121,8 +123,65 @@ class NovelCovidAPI extends RESTDataSource {
   async getYesterday(name) {
     // console.log(name);
     const response = await this.get(`states/${name}?yesterday=true`);
-    return response
+    return response;
   }
+
+  reduceCounty(key) {
+    return {statename: key.province,
+      cummulativeCases: key.stats.confirmed,
+      cummulativeDeaths: key.stats.deaths,
+      cummulativeRecovered: key.stats.recovered,
+      activeCases: key.stats.confirmed - key.stats.recovered - key.stats.deaths,
+      info: {lat: key.coordinates.latitude, lon: key.coordinates.longitude},
+      ...key};
+  }
+
+
+  async getCounties() {
+    const response = await this.get('jhucsse/counties');
+    const counties = response.map((key) => {
+      return this.reduceCounty(key);
+    });
+    // //console.log(counties);
+    // const duplicate_countes = counties.reduce((accum, value, index) => {
+    //   if (value.county in accum) {
+    //     accum[value.county]++;
+    //   } else {
+    //     accum[value.county]=1;
+    //   }
+    //   return accum;
+    // }, {});
+
+    // let sortable = [];
+    // for (const county in duplicate_countes) {
+    //   sortable.push([county, duplicate_countes[county]]);
+    // }
+
+    // let s = sortable.sort(function(a, b) {
+    //   return a[1] - b[1];
+    // });
+    // console.log(s[s.length-2]);
+
+    return counties;
+  }
+
+  async getCountyByName(name, state) {
+    const response = await this.get(`jhucsse/counties/${name}`);
+    const filtedResponse = response.filter((key) => key.province === state);
+    const reducedResponse = filtedResponse.map((key) => {
+      return this.reduceCounty(key);
+    });
+    return await reducedResponse;
+    // console.log(reducedResponse);
+  }
+
+
+  // async getCountiesByState(state) {
+  //   console.log(state);
+  //   const stateName = state.state
+  //   const response = await this.get(`jhucsse/counties/${stateName}`);
+
+  // }
 }
 
 // I think that maybe these should not be async functions since
@@ -158,6 +217,19 @@ const resolvers = {
       // console.log(name)
       return names.map((name) => dataSources.ncapi.getStatebyName(name));
     },
+    AllCounties: (_parent, _args, {dataSources}) => {
+      return dataSources.ncapi.getCounties();
+    },
+    CountyByName: async (_parent, {name, state}, {dataSources}) => {
+      // Because the rest query returns an array and we are making sure we only return a single object
+      const countyByName = await dataSources.ncapi.getCountyByName(name, state);
+      // return countyByName
+      // console.log(countyByName);
+      if (countyByName.length > 1) {
+        throw new Error(`${state},${name} returns ambiguous query`);
+      }
+      return countyByName[0];
+    },
   },
 
   State: {
@@ -173,6 +245,14 @@ const resolvers = {
       const response = await dataSources.ncapi.getYesterday(state.state);
       return response.todayDeaths;
     },
+    county: async (state, __, {dataSources}) =>{
+      const response = await dataSources.ncapi.getCounties();
+      const filtedResponse = response.filter((county) => {
+        return county.province === state.state;
+      }).map((key) => dataSources.ncapi.reduceCounty(key));
+      // console.log(filtedResponse);
+      return filtedResponse;
+    },
   },
 
   Country: {
@@ -180,7 +260,23 @@ const resolvers = {
       const countryInfo = country.countryInfo;
       return dataSources.ncapi.getTimeLinebyCountry(countryInfo);
     },
+    state: async (country, _, {dataSources}) => {
+      // right here we only have USA
+      // console.log(country.country)
+      const statesArray = await dataSources.ncapi.getStates();
+      return statesArray.filter((state) => {
+        console.log(state.parentcountry);
+        return state.parentcountry === country.country;
+      });
+    },
   },
+  County: {
+    state: async (county, _, {dataSources}) => {
+      return await dataSources.ncapi.getStatebyName(county.statename);
+    },
+  },
+
+
   Date: new GraphQLScalarType({
     name: 'Date',
     description: 'Date custom scalar type',

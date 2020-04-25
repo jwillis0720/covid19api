@@ -12,6 +12,8 @@ const typeDefs = gql`
     AllStates: [State]!
     StateByName(name: String!): State!
     StateByNames(names: [String]!): State!
+    AllCounties: [County]!
+    CountyByName(name: String!, state: String!): County!
   }
   type CountryInfo{
       id: ID @resolveAs(name: "_id")
@@ -40,6 +42,7 @@ const typeDefs = gql`
       tests: Int,
       testsPerOneMillion: Int,
       continent: String
+      state: [State]
       timeline: [TimeLine]
   }
 
@@ -49,13 +52,33 @@ const typeDefs = gql`
     todayCases: Int 
     yesterdayCases: Int,
     cummulativeDeaths: Int @resolveAs(name:"deaths")
-    todayDeaths: Int  
+    todayDeaths: Int
     yesterdayDeaths: Int  
     activeCases: Int @resolveAs(name:"active")
     cummulativeTests: Int @resolveAs(name:"tests")
     testsPerOneMillion: Int
+    parentcountry: String
+    county: [County]
     timeline:[TimeLine]
   }
+
+  type County{
+    name: ID @resolveAs(name: "county")
+    cummulativeCases: Int
+    cummulativeDeaths: Int
+    cummulativeRecovered: Int
+    activeCases: Int
+    state: State
+    statename: String
+    info: CountyInfo
+  }
+
+  type CountyInfo{
+    lat: String
+    lon: String
+
+  }
+
   type TimeLine{
       date: Date
       datereadable: String
