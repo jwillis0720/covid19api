@@ -97,11 +97,11 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getStates() {
-    return this.get('states/?yesterday=true');
+    return this.get('states/');
   }
 
   async getStatebyName(name) {
-    const res = await this.get(`states/${name}?yesterday=true`);
+    const res = await this.get(`states/${name}`);
     return res;
   }
 
@@ -119,7 +119,7 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getYesterday(name) {
-    console.log(name);
+    // console.log(name);
     const response = await this.get(`states/${name}?yesterday=true`);
     return response
   }
@@ -164,15 +164,15 @@ const resolvers = {
     timeline: async (state, _, {dataSources}) => {
       return dataSources.ncapi.getTimeLinebyState(state.state);
     },
-    // yesterdayCases: async (state, _, {dataSources}) =>{
-    //   const response = await dataSources.ncapi.getYesterday(state.state);
-    //   // console.log(response)
-    //   return response.todayCases;
-    // },
-    // yesterdayDeaths: async (state, _, {dataSources}) =>{
-    //   const response = await dataSources.ncapi.getYesterday(state.state);
-    //   return response.todayDeaths;
-    // },
+    yesterdayCases: async (state, _, {dataSources}) =>{
+      const response = await dataSources.ncapi.getYesterday(state.state);
+      // console.log(response)
+      return response.todayCases;
+    },
+    yesterdayDeaths: async (state, _, {dataSources}) =>{
+      const response = await dataSources.ncapi.getYesterday(state.state);
+      return response.todayDeaths;
+    },
   },
 
   Country: {

@@ -27,9 +27,11 @@ const typeDefs = gql`
       datereadable: String,
       info: CountryInfo @resolveAs(name: "countryInfo") 
       cummulativeCases: Int @resolveAs(name: "cases")
-      yesterdayCases: Int @resolveAs(name: "todayCases"),
+      todayCases: Int, 
+      yesterdayCases: Int, 
       cummulativeDeaths: Int @resolveAs(name: "deaths"),
-      yesterdayDeaths: Int  @resolveAs(name: "todayDeaths"),
+      todayDeaths: Int,
+      yesterdayDeaths: Int, 
       recovered: Int,
       active: Int,
       critical: Int,
@@ -44,9 +46,11 @@ const typeDefs = gql`
   type State{
     name: ID @resolveAs(name: "state")
     cummulativeCases : Int @resolveAs(name: "cases")
-    yesterdayCases: Int @resolveAs(name: "todayCases"),
+    todayCases: Int 
+    yesterdayCases: Int,
     cummulativeDeaths: Int @resolveAs(name:"deaths")
-    yesterdayDeaths: Int  @resolveAs(name: "todayDeaths"),,
+    todayDeaths: Int  
+    yesterdayDeaths: Int  
     activeCases: Int @resolveAs(name:"active")
     cummulativeTests: Int @resolveAs(name:"tests")
     testsPerOneMillion: Int
