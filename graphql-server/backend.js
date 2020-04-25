@@ -1,76 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-const { gql } = require('apollo-server');
-const { RESTDataSource } = require('apollo-datasource-rest');
-const { GraphQLScalarType } = require('graphql');
-const { Kind } = require('graphql/language');
+const {RESTDataSource} = require('apollo-datasource-rest');
+const {GraphQLScalarType} = require('graphql');
+const {Kind} = require('graphql/language');
 
-const typeDefs = gql`
-   scalar Date
-   directive @resolveAs(name: String) on FIELD_DEFINITION
-
-   type Query {
-    AllCountries: [Country]!
-    CountryByID(id: Int!) : Country!
-    CountryByIDs(ids: [Int]!) : [Country]!
-    CountryByName(name: String!) : Country!
-    CountryByNames(names: [String]!) : [Country]!
-    States: [State]!
-    State(name: String): State!
-  }
-  type CountryInfo{
-      id: ID @resolveAs(name: "_id")
-      iso2: String
-      iso3: String
-      lat: Float
-      long: Float
-      flag: String
-  }
-  type Country {
-      name: ID @resolveAs(name: "country")
-      date: Date @resolveAs(name: "updated"),
-      datereadable: String,
-      info: CountryInfo @resolveAs(name: "countryInfo") 
-      cummulativeCases: Int @resolveAs(name: "cases")
-      todayCases: Int,
-      cummulativeDeaths: Int @resolveAs(name: "deaths")
-      todayDeaths: Int,
-      recovered: Int,
-      active: Int,
-      critical: Int,
-      casesPerOneMillion: Int,
-      deathsPerOneMillion: Int,
-      tests: Int,
-      testsPerOneMillion: Int,
-      continent: String
-      timeline: [TimeLine]
-  }
-
-
-
-  type State{
-    name: ID @resolveAs(name: "state")
-    cummulativeCases : Int @resolveAs(name: "cases")
-    todayCases: Int,
-    cummulativeDeaths: Int @resolveAs(name:"deaths")
-    todayDeaths: Int,
-    activeCases: Int @resolveAs(name:"active")
-    cummulativeTests: Int @resolveAs(name:"tests")
-    testsPerOneMillion: Int
-    timeline:[TimeLine]
-  }
-  type TimeLine{
-      id: ID
-      date: Date
-      datereadable: String
-      cases: Int
-      deaths: Int
-      recovered: Int
-      fips: Int
-      country: Country
-  }
-`;
 
 class NovelCovidAPI extends RESTDataSource {
   constructor() {
@@ -81,49 +15,96 @@ class NovelCovidAPI extends RESTDataSource {
   async getCountries() {
     const response = await this.get('countries');
     return response.map((obj) => {
-      return { ...obj, datereadable: new Date(obj.updated).toDateString() };
+      return {...obj, datereadable: new Date(obj.updated).toDateString()};
     });
   }
 
   async getCountrybyID(id) {
     const response = await this.get(`countries/${id}`);
-    return { ...response, datereadable: new Date(response.updated).toDateString() };
+    return {...response, datereadable: new Date(response.updated).toDateString()};
   }
 
   async getCountryByName(name) {
     const response = await this.get(`countries/${name}?strict=false`);
-    return { ...response, datereadable: new Date(response.updated).toDateString() };
+    return {...response, datereadable: new Date(response.updated).toDateString()};
   }
 
-  async getTimeLinebyCountry(id) {
-    console.log(id)
-    ///I don't want a bad id breaking the entire api query to grind to a halt if results cant resolve
-    const results = this.get(`historical/${id}?lastdays=all`).then((res) => {
-      const { cases, deaths, recovered } = res.timeline;
-      const restructure = Object.keys(cases).map((date) => ({
-        date: new Date(date).getTime(),
-        datereadable: new Date(date).toDateString(),
-        cases: cases[date],
-        deaths: deaths[date],
-        recovered: recovered[date],
-        id: id,
-      }))
-      return restructure;
-    }).catch(
-      (err) => {
-        console.error("error", err)
-        return []
-      })
-    return results
+  async getTimeLinebyCountry2(countryInfo) {
+    // console.log(countryInfo.iso3);
+    let response = [];
+    try {
+      response = await this.get(`historical/${countryInfo.iso3}?lastdays=all`);
+    } catch (err) {
+      console.error(`iso3 ${countryInfo.iso3} failed, trying _id`);
+      try {
+        response = await this.get(`historical/${countryInfo._id}?lastdays=all`);
+      } catch (err) {
+        console.error(`error with _id- ${countryInfo._id} returning nothing`);
+        return response;
+      }
+    }
+    // .catch(await this.get(`historical/${countryInfo._id}?lastdays=all`))
+    // .catch(
+    // console.log(response);
+    const {cases, deaths, recovered} = response.timeline;
+    const result = Object.keys(cases).map((date) => ({
+      date: new Date(date).getTime(),
+      datereadable: new Date(date).toDateString(),
+      cases: cases[date],
+      deaths: deaths[date],
+      recovered: recovered[date],
+      countryInfo: [countryInfo],
+    }));
+    return result;
+  }
+  async getTimeLinebyCountry(countryInfo) {
+    // console.log(countryInfo.iso3);
+    const potentialIds = [
+      countryInfo._id,
+      countryInfo.iso3,
+      countryInfo.iso2,
+    ];
+
+    let response = Object();
+    for (const index of potentialIds) {
+      // console.log(index);
+      try {
+        response = await this.get(`historical/${index}?lastdays=all`);
+        break;
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    if (Object.keys(response).length===0) {
+      return [];
+    }
+
+    // console.log(response);
+    const {cases, deaths, recovered} = response.timeline;
+    const result = Object.keys(cases).map((date) => ({
+      date: new Date(date).getTime(),
+      datereadable: new Date(date).toDateString(),
+      cases: cases[date],
+      deaths: deaths[date],
+      recovered: recovered[date],
+      countryInfo: [countryInfo],
+    }));
+    return result;
   }
 
   async getStates() {
-    return this.get('states/');
+    // /Everything from this API comes from the USA
+    const response = await this.get('states/');
+    return response.map((state) => {
+      return {...state, 'parentcountry': 'USA'};
+    });
   }
 
   async getStatebyName(name) {
+    // /Everything from this API comes from the USA
     const res = await this.get(`states/${name}`);
-    return res;
+    return {...res, 'parentcountry': 'USA'};
   }
 
   async getTimeLinebyState(name) {
@@ -134,58 +115,168 @@ class NovelCovidAPI extends RESTDataSource {
       return {
         ...filtered,
         date: new Date(filtered.date).getTime(),
-        datereadable: new Date(filtered.date).toDateString()
+        datereadable: new Date(filtered.date).toDateString(),
       };
     });
   }
+
+  async getYesterday(name) {
+    // console.log(name);
+    const response = await this.get(`states/${name}?yesterday=true`);
+    return response;
+  }
+
+  reduceCounty(key) {
+    return {statename: key.province,
+      cummulativeCases: key.stats.confirmed,
+      cummulativeDeaths: key.stats.deaths,
+      cummulativeRecovered: key.stats.recovered,
+      activeCases: key.stats.confirmed - key.stats.recovered - key.stats.deaths,
+      info: {lat: key.coordinates.latitude, lon: key.coordinates.longitude},
+      ...key};
+  }
+
+
+  async getCounties() {
+    const response = await this.get('jhucsse/counties');
+    const counties = response.map((key) => {
+      return this.reduceCounty(key);
+    });
+    // //console.log(counties);
+    // const duplicate_countes = counties.reduce((accum, value, index) => {
+    //   if (value.county in accum) {
+    //     accum[value.county]++;
+    //   } else {
+    //     accum[value.county]=1;
+    //   }
+    //   return accum;
+    // }, {});
+
+    // let sortable = [];
+    // for (const county in duplicate_countes) {
+    //   sortable.push([county, duplicate_countes[county]]);
+    // }
+
+    // let s = sortable.sort(function(a, b) {
+    //   return a[1] - b[1];
+    // });
+    // console.log(s[s.length-2]);
+
+    return counties;
+  }
+
+  async getCountyByName(name, state) {
+    const response = await this.get(`jhucsse/counties/${name}`);
+    const filtedResponse = response.filter((key) => key.province === state);
+    const reducedResponse = filtedResponse.map((key) => {
+      return this.reduceCounty(key);
+    });
+    return await reducedResponse;
+    // console.log(reducedResponse);
+  }
+
+
+  // async getCountiesByState(state) {
+  //   console.log(state);
+  //   const stateName = state.state
+  //   const response = await this.get(`jhucsse/counties/${stateName}`);
+
+  // }
 }
 
+// I think that maybe these should not be async functions since
+// some of them don't return promises and we resolve them in the RESTAPI
+// while this probably doesn't matter, I just want to be a good programmer
 const resolvers = {
   Query: {
-    AllCountries: async (_parent, _args, { dataSources }) => {
+    AllCountries: (_parent, _args, {dataSources}) => {
       return dataSources.ncapi.getCountries();
     },
-    CountryByID: async (_, { id }, { dataSources }) => {
+    CountryByID: (_, {id}, {dataSources}) => {
       return dataSources.ncapi.getCountrybyID(id);
     },
-    CountryByIDs: async (_, { ids }, { dataSources }) => {
-      return Promise.all(
-        ids.map((id) => dataSources.ncapi.getCountrybyID(id)));
+    CountryByIDs: (_, {ids}, {dataSources}) => {
+      // no reseaon to return promise.all since get country by id is not returning promises
+      return ids.map((id) => dataSources.ncapi.getCountrybyID(id));
     },
-    CountryByName: async (_, { name }, { dataSources }) => {
+    CountryByName: (_, {name}, {dataSources}) => {
       return dataSources.ncapi.getCountryByName(name);
     },
-    CountryByNames: async (_, { names }, { dataSources }) => {
-      return Promise.all(
-        names.map((name) => dataSources.ncapi.getCountryByName(name)));
+    CountryByNames: (_, {names}, {dataSources}) => {
+      return names.map((name) => dataSources.ncapi.getCountryByName(name));
     },
 
-    States: async (_parent, _args, { dataSources }) => {
+    AllStates: (_parent, _args, {dataSources}) => {
       return dataSources.ncapi.getStates();
     },
-    State: async (_parent, { name }, { dataSources }) => {
+    StateByName: (_parent, {name}, {dataSources}) => {
       // console.log(name)
       return dataSources.ncapi.getStatebyName(name);
+    },
+    StateByNames: (_parent, {names}, {dataSources}) => {
+      // console.log(name)
+      return names.map((name) => dataSources.ncapi.getStatebyName(name));
+    },
+    AllCounties: (_parent, _args, {dataSources}) => {
+      return dataSources.ncapi.getCounties();
+    },
+    CountyByName: async (_parent, {name, state}, {dataSources}) => {
+      // Because the rest query returns an array and we are making sure we only return a single object
+      const countyByName = await dataSources.ncapi.getCountyByName(name, state);
+      // return countyByName
+      // console.log(countyByName);
+      if (countyByName.length > 1) {
+        throw new Error(`${state},${name} returns ambiguous query`);
+      }
+      return countyByName[0];
     },
   },
 
   State: {
-    timeline: async (state, _, { dataSources }) => {
+    timeline: async (state, _, {dataSources}) => {
       return dataSources.ncapi.getTimeLinebyState(state.state);
+    },
+    yesterdayCases: async (state, _, {dataSources}) =>{
+      const response = await dataSources.ncapi.getYesterday(state.state);
+      // console.log(response)
+      return response.todayCases;
+    },
+    yesterdayDeaths: async (state, _, {dataSources}) =>{
+      const response = await dataSources.ncapi.getYesterday(state.state);
+      return response.todayDeaths;
+    },
+    county: async (state, __, {dataSources}) =>{
+      const response = await dataSources.ncapi.getCounties();
+      const filtedResponse = response.filter((county) => {
+        return county.province === state.state;
+      }).map((key) => dataSources.ncapi.reduceCounty(key));
+      // console.log(filtedResponse);
+      return filtedResponse;
     },
   },
 
   Country: {
-    timeline: async (country, _, { dataSources }) => {
-      const _id = country.countryInfo._id;
-      return dataSources.ncapi.getTimeLinebyCountry(_id);
+    timeline: async (country, _, {dataSources}) => {
+      const countryInfo = country.countryInfo;
+      return dataSources.ncapi.getTimeLinebyCountry(countryInfo);
+    },
+    state: async (country, _, {dataSources}) => {
+      // right here we only have USA
+      // console.log(country.country)
+      const statesArray = await dataSources.ncapi.getStates();
+      return statesArray.filter((state) => {
+        console.log(state.parentcountry);
+        return state.parentcountry === country.country;
+      });
     },
   },
-  TimeLine: {
-    country: async (parent, _, { dataSources }) => {
-      return dataSources.ncapi.getCountrybyID(parent.id);
+  County: {
+    state: async (county, _, {dataSources}) => {
+      return await dataSources.ncapi.getStatebyName(county.statename);
     },
   },
+
+
   Date: new GraphQLScalarType({
     name: 'Date',
     description: 'Date custom scalar type',
@@ -206,4 +297,4 @@ const resolvers = {
   }),
 };
 
-module.exports = { typeDefs, resolvers, NovelCovidAPI };
+module.exports = {resolvers, NovelCovidAPI};
