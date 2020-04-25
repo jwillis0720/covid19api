@@ -97,11 +97,11 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getStates() {
-    return this.get('states/');
+    return this.get('states/?yesterday=true');
   }
 
   async getStatebyName(name) {
-    const res = await this.get(`states/${name}`);
+    const res = await this.get(`states/${name}?yesterday=true`);
     return res;
   }
 
@@ -113,9 +113,15 @@ class NovelCovidAPI extends RESTDataSource {
       return {
         ...filtered,
         date: new Date(filtered.date).getTime(),
-        datereadable: new Date(filtered.date).toDateString()
+        datereadable: new Date(filtered.date).toDateString(),
       };
     });
+  }
+
+  async getYesterday(name) {
+    console.log(name);
+    const response = await this.get(`states/${name}?yesterday=true`);
+    return response
   }
 }
 
@@ -144,9 +150,13 @@ const resolvers = {
     AllStates: (_parent, _args, {dataSources}) => {
       return dataSources.ncapi.getStates();
     },
-    State: (_parent, {name}, {dataSources}) => {
+    StateByName: (_parent, {name}, {dataSources}) => {
       // console.log(name)
       return dataSources.ncapi.getStatebyName(name);
+    },
+    StateByNames: (_parent, {names}, {dataSources}) => {
+      // console.log(name)
+      return names.map((name) => dataSources.ncapi.getStatebyName(name));
     },
   },
 
@@ -154,21 +164,23 @@ const resolvers = {
     timeline: async (state, _, {dataSources}) => {
       return dataSources.ncapi.getTimeLinebyState(state.state);
     },
+    // yesterdayCases: async (state, _, {dataSources}) =>{
+    //   const response = await dataSources.ncapi.getYesterday(state.state);
+    //   // console.log(response)
+    //   return response.todayCases;
+    // },
+    // yesterdayDeaths: async (state, _, {dataSources}) =>{
+    //   const response = await dataSources.ncapi.getYesterday(state.state);
+    //   return response.todayDeaths;
+    // },
   },
 
   Country: {
     timeline: async (country, _, {dataSources}) => {
       const countryInfo = country.countryInfo;
       return dataSources.ncapi.getTimeLinebyCountry(countryInfo);
-      // return dataSources.ncapi.getTimeLinebyCountry2TheReturn(countryInfo);
-      // return dataSources.ncapi.getTimeLinebyCountry3TheFinal(countryInfo);
     },
   },
-  // TimeLine: {
-  //   country: async (parent, _, {dataSources}) => {
-  //     return dataSources.ncapi.getCountrybyID(parent.id);
-  //   },
-  // },
   Date: new GraphQLScalarType({
     name: 'Date',
     description: 'Date custom scalar type',

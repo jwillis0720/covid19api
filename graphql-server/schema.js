@@ -10,7 +10,8 @@ const typeDefs = gql`
     CountryByName(name: String!) : Country!
     CountryByNames(names: [String]!) : [Country]!
     AllStates: [State]!
-    State(name: String): State!
+    StateByName(name: String!): State!
+    StateByNames(names: [String]!): State!
   }
   type CountryInfo{
       id: ID @resolveAs(name: "_id")
@@ -26,9 +27,9 @@ const typeDefs = gql`
       datereadable: String,
       info: CountryInfo @resolveAs(name: "countryInfo") 
       cummulativeCases: Int @resolveAs(name: "cases")
-      todayCases: Int,
-      cummulativeDeaths: Int @resolveAs(name: "deaths")
-      todayDeaths: Int,
+      yesterdayCases: Int @resolveAs(name: "todayCases"),
+      cummulativeDeaths: Int @resolveAs(name: "deaths"),
+      yesterdayDeaths: Int  @resolveAs(name: "todayDeaths"),
       recovered: Int,
       active: Int,
       critical: Int,
@@ -43,9 +44,9 @@ const typeDefs = gql`
   type State{
     name: ID @resolveAs(name: "state")
     cummulativeCases : Int @resolveAs(name: "cases")
-    todayCases: Int,
+    yesterdayCases: Int @resolveAs(name: "todayCases"),
     cummulativeDeaths: Int @resolveAs(name:"deaths")
-    todayDeaths: Int,
+    yesterdayDeaths: Int  @resolveAs(name: "todayDeaths"),,
     activeCases: Int @resolveAs(name:"active")
     cummulativeTests: Int @resolveAs(name:"tests")
     testsPerOneMillion: Int
@@ -63,3 +64,4 @@ const typeDefs = gql`
   }
 `;
 module.exports = typeDefs;
+
