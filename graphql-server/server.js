@@ -1,6 +1,7 @@
 const {ApolloServer} = require('apollo-server');
 const {resolveAs} = require('graphql-directive-resolve-as');
-const {typeDefs, resolvers, NovelCovidAPI} = require('./backend');
+const {resolvers, NovelCovidAPI} = require('./backend');
+const typeDefs = require('./schema');
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -14,7 +15,6 @@ const server = new ApolloServer({
   },
   tracing: false,
 });
-
 
 
 // Launch the server
