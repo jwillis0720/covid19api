@@ -1,6 +1,6 @@
 const {ApolloServer} = require('apollo-server');
 const {resolveAs} = require('graphql-directive-resolve-as');
-const {resolvers, NovelCovidAPI} = require('./backend');
+const {resolvers, NovelCovidAPI, CSVAPI} = require('./backend');
 const typeDefs = require('./schema');
 const server = new ApolloServer({
   typeDefs,
@@ -8,6 +8,7 @@ const server = new ApolloServer({
   dataSources: () => {
     return {
       ncapi: new NovelCovidAPI(),
+      csv: new CSVAPI()
     };
   },
   schemaDirectives: {

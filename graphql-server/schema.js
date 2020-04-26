@@ -63,10 +63,11 @@ const typeDefs = gql`
     timeline:[TimeLine]
   }
 
-  ##ToDo State Info
   type StateInfo{
-    lat: String
-    lon: String
+    lat: Float
+    lon: Float
+    population: Int
+    landarea: Float
   }
 
 
@@ -84,8 +85,8 @@ const typeDefs = gql`
   }
 
   type CountyInfo{
-    lat: String
-    lon: String
+    lat: Float
+    lon: Float
   }
 
   type TimeLine{

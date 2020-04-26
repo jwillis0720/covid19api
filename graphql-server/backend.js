@@ -5,6 +5,44 @@ const {RESTDataSource} = require('apollo-datasource-rest');
 const {GraphQLScalarType} = require('graphql');
 const {Kind} = require('graphql/language');
 
+class CSVAPI extends RESTDataSource {
+  constructor() {
+    super();
+    // need to put this on a CDN
+    this.baseURL = 'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
+  }
+
+  parseCSV(csv) {
+    const lines=csv.split('\n');
+
+    const result = [];
+
+    const headers=lines[0].split(',');
+
+    for (let i=1; i<lines.length; i++) {
+      const obj = {};
+      const currentline=lines[i].split(',');
+
+      for (let j=0; j<headers.length; j++) {
+        obj[headers[j]] = currentline[j];
+      }
+
+      result.push(obj);
+    }
+
+    // return result; //JavaScript object
+    return result;// JSON
+  }
+  async getCountryCentroids() {
+    const response = await this.get('country_centroids_az8.csv');
+    return this.parseCSV(response);
+  }
+  async getStateInfo() {
+    const response = await this.get('StateInfoPop.json');
+    return response;
+  }
+}
+
 
 class NovelCovidAPI extends RESTDataSource {
   constructor() {
@@ -253,6 +291,25 @@ const resolvers = {
       // console.log(filtedResponse);
       return filtedResponse;
     },
+    info: async (state, _, {dataSources}) => {
+      const stateName = state.state;
+      const stateObj = await dataSources.csv.getStateInfo().then((info) => JSON.parse(info));
+      const filteredStateObj = stateObj.filter((obj) => obj.State.toLowerCase() === stateName.toLowerCase());
+      if (filteredStateObj.length > 1) {
+        throw new Error(`${state},returns ambiguous for info query`);
+      }
+      console.log(filteredStateObj)
+      const mappedObj = {
+        lat: filteredStateObj[0].Latitude, 
+        lon: filteredStateObj[0].Longitude,
+        population: filteredStateObj[0].pop,
+        landarea: filteredStateObj[0].LandAreami2,
+      };
+      return mappedObj;
+      // console.log(stateObj.filter((obj) => obj.StateLong.toLowerCase() === stateName.toLowerCase()));
+      // console.log(csvObj.filter((locationobj) => {
+      //   return location.
+    },
   },
 
   Country: {
@@ -300,4 +357,4 @@ const resolvers = {
   }),
 };
 
-module.exports = {resolvers, NovelCovidAPI};
+module.exports = {resolvers, NovelCovidAPI, CSVAPI};
