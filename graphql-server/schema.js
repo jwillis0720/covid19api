@@ -58,11 +58,17 @@ const typeDefs = gql`
     cummulativeTests: Int @resolveAs(name:"tests")
     testsPerOneMillion: Int
     parentcountry: String
+    info:StateInfo
     county: [County]
     timeline:[TimeLine]
   }
 
   ##ToDo State Info
+  type StateInfo{
+    lat: String
+    lon: String
+  }
+
 
   type County{
     name: ID @resolveAs(name: "county")
@@ -73,13 +79,13 @@ const typeDefs = gql`
     state: State
     statename: String
     info: CountyInfo
+    centroidinfo: String
     timeline: [TimeLine]
   }
 
   type CountyInfo{
     lat: String
     lon: String
-
   }
 
   type TimeLine{
