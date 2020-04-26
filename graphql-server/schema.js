@@ -62,6 +62,8 @@ const typeDefs = gql`
     timeline:[TimeLine]
   }
 
+  ##ToDo State Info
+
   type County{
     name: ID @resolveAs(name: "county")
     cummulativeCases: Int
@@ -71,6 +73,7 @@ const typeDefs = gql`
     state: State
     statename: String
     info: CountyInfo
+    timeline: [TimeLine]
   }
 
   type CountyInfo{

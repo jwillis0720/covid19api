@@ -142,25 +142,6 @@ class NovelCovidAPI extends RESTDataSource {
     const counties = response.map((key) => {
       return this.reduceCounty(key);
     });
-    // //console.log(counties);
-    // const duplicate_countes = counties.reduce((accum, value, index) => {
-    //   if (value.county in accum) {
-    //     accum[value.county]++;
-    //   } else {
-    //     accum[value.county]=1;
-    //   }
-    //   return accum;
-    // }, {});
-
-    // let sortable = [];
-    // for (const county in duplicate_countes) {
-    //   sortable.push([county, duplicate_countes[county]]);
-    // }
-
-    // let s = sortable.sort(function(a, b) {
-    //   return a[1] - b[1];
-    // });
-    // console.log(s[s.length-2]);
 
     return counties;
   }
@@ -176,11 +157,30 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
 
-  // async getCountiesByState(state) {
-  //   console.log(state);
-  //   const stateName = state.state
-  //   const response = await this.get(`jhucsse/counties/${stateName}`);
-
+  async getCountyTimeLineByState(county) {
+    console.log(county.statename);
+    const stateName = county.statename.toLowerCase();
+    const response = await this.get(`historical/usacounties/${stateName}`);
+    const filtedResponse = response.filter((key) => key.county === county.county.toLowerCase());
+    console.log(filtedResponse);
+    // recovered on found in the counties, we should find a way to check that
+    const {cases, deaths, recovered} = filtedResponse[0].timeline;
+    console.log(cases);
+    const result = Object.keys(cases).map((date) => {
+      const dataObject = {
+        date: new Date(date).getTime(),
+        datereadable: new Date(date).toDateString(),
+        cases: cases[date],
+        deaths: deaths[date]};
+      if (recovered != undefined) {
+        dataObject.recovered = recovered[date];
+      } else {
+        dataObject.recovered = null;
+      }
+      return dataObject;
+    });
+    return result;
+  }
   // }
 }
 
@@ -273,6 +273,9 @@ const resolvers = {
   County: {
     state: async (county, _, {dataSources}) => {
       return await dataSources.ncapi.getStatebyName(county.statename);
+    },
+    timeline: async (county, _, {dataSources}) => {
+      return await dataSources.ncapi.getCountyTimeLineByState(county);
     },
   },
 
