@@ -85,8 +85,13 @@ const typeDefs = gql`
   }
 
   type CountyInfo{
+    name: String
+    statename: String
     lat: Float
     lon: Float
+    population: Int
+    landarea: Float
+    FIPS: Int
   }
 
   type TimeLine{

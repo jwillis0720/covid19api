@@ -12,34 +12,26 @@ class CSVAPI extends RESTDataSource {
     this.baseURL = 'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
   }
 
-  parseCSV(csv) {
-    const lines=csv.split('\n');
-
-    const result = [];
-
-    const headers=lines[0].split(',');
-
-    for (let i=1; i<lines.length; i++) {
-      const obj = {};
-      const currentline=lines[i].split(',');
-
-      for (let j=0; j<headers.length; j++) {
-        obj[headers[j]] = currentline[j];
-      }
-
-      result.push(obj);
-    }
-
-    // return result; //JavaScript object
-    return result;// JSON
-  }
   async getCountryCentroids() {
     const response = await this.get('country_centroids_az8.csv');
     return this.parseCSV(response);
   }
   async getStateInfo() {
     const response = await this.get('StateInfoPop.json');
-    return response;
+    return JSON.parse(response);
+  }
+  async getCountyInfo(countyInfo) {
+    const response = await this.get('CountyInfo.json');
+    const responseJSON = JSON.parse(response);
+    let filtedResponse = [];
+    filtedResponse = responseJSON.filter((key) =>
+      (countyInfo.statename.toLowerCase() == key.State.toLowerCase())).filter((key) =>
+      (countyInfo.name.toLowerCase() == key.County.toLowerCase()));
+    if (filtedResponse.length > 1) {
+      throw new Error(`${countyInfo},returns ambiguous for info query`);
+    }
+    console.log(filtedResponse);
+    return filtedResponse;
   }
 }
 
@@ -170,7 +162,12 @@ class NovelCovidAPI extends RESTDataSource {
       cummulativeDeaths: key.stats.deaths,
       cummulativeRecovered: key.stats.recovered,
       activeCases: key.stats.confirmed - key.stats.recovered - key.stats.deaths,
-      info: {lat: key.coordinates.latitude, lon: key.coordinates.longitude},
+      info: {
+        lat: key.coordinates.latitude,
+        lon: key.coordinates.longitude,
+        name: key.county,
+        statename: key.province,
+      },
       ...key};
   }
 
@@ -298,9 +295,9 @@ const resolvers = {
       if (filteredStateObj.length > 1) {
         throw new Error(`${state},returns ambiguous for info query`);
       }
-      console.log(filteredStateObj)
+      console.log(filteredStateObj);
       const mappedObj = {
-        lat: filteredStateObj[0].Latitude, 
+        lat: filteredStateObj[0].Latitude,
         lon: filteredStateObj[0].Longitude,
         population: filteredStateObj[0].pop,
         landarea: filteredStateObj[0].LandAreami2,
@@ -333,6 +330,22 @@ const resolvers = {
     },
     timeline: async (county, _, {dataSources}) => {
       return await dataSources.ncapi.getCountyTimeLineByState(county);
+    },
+  },
+
+  CountyInfo: {
+    population: async (countyInfo, _, {dataSources}) => {
+      const response = await dataSources.csv.getCountyInfo(countyInfo);
+      return response[0]['pop'];
+    },
+
+    FIPS: async (countyInfo, _, {dataSources}) => {
+      const response = await dataSources.csv.getCountyInfo(countyInfo);
+      return response[0]['FIPS'];
+    },
+    landarea: async (countyInfo, _, {dataSources}) => {
+      const response = await dataSources.csv.getCountyInfo(countyInfo);
+      return response[0]['LandAreami2'];
     },
   },
 
