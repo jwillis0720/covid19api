@@ -9,9 +9,19 @@ class CSVAPI extends RESTDataSource {
       'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
   }
 
-  async getCountryCentroids() {
-    const response = await this.get('country_centroids_az8.csv');
-    return this.parseCSV(response);
+  async getCountryInfo(countryInfo) {
+    const response = await this.get('CountryInfo.json');
+    const JSONResponse = JSON.parse(response);
+    const iso3 = countryInfo.iso3;
+    const iso2 = countryInfo.iso2;
+    const filteredResponse = JSONResponse.filter((key) => {
+      // console.log(key.iso_a3);
+      return key['iso_a3'] === iso3;
+    });
+    if (filteredResponse.length > 1) {
+      throw new Error(`${countryInfo},returns ambiguous for info query`);
+    }
+    return filteredResponse[0];
   }
   async getStateInfo() {
     const response = await this.get('StateInfoPop.json');

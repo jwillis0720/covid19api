@@ -4,12 +4,14 @@ const queryObject = require('./query');
 const countryObject = require('./country');
 const stateObject = require('./state');
 const countyObject = require('./county');
+const countryInfoObject = require('./countryinfo');
 const countyInfoObject = require('./countyinfo');
 const resolvers = {
   Query: queryObject,
   Country: countryObject,
   State: stateObject,
   County: countyObject,
+  CountryInfo: countryInfoObject,
   CountyInfo: countyInfoObject,
   Date: new GraphQLScalarType({
     name: 'Date',
