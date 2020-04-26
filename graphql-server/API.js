@@ -1,12 +1,12 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
-const {RESTDataSource} = require('apollo-datasource-rest');
-
+const { RESTDataSource } = require('apollo-datasource-rest');
 class CSVAPI extends RESTDataSource {
   constructor() {
     super();
     // need to put this on a CDN
-    this.baseURL = 'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
+    this.baseURL =
+      'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
   }
 
   async getCountryCentroids() {
@@ -21,17 +21,20 @@ class CSVAPI extends RESTDataSource {
     const response = await this.get('CountyInfo.json');
     const responseJSON = JSON.parse(response);
     let filtedResponse = [];
-    filtedResponse = responseJSON.filter((key) =>
-      (countyInfo.statename.toLowerCase() == key.State.toLowerCase())).filter((key) =>
-      (countyInfo.name.toLowerCase() == key.County.toLowerCase()));
+    filtedResponse = responseJSON
+      .filter(
+        (key) => countyInfo.statename.toLowerCase() == key.State.toLowerCase()
+      )
+      .filter(
+        (key) => countyInfo.name.toLowerCase() == key.County.toLowerCase()
+      );
     if (filtedResponse.length > 1) {
       throw new Error(`${countyInfo},returns ambiguous for info query`);
     }
-    console.log(filtedResponse);
+    // console.log(filtedResponse);
     return filtedResponse;
   }
 }
-
 
 class NovelCovidAPI extends RESTDataSource {
   constructor() {
@@ -42,18 +45,24 @@ class NovelCovidAPI extends RESTDataSource {
   async getCountries() {
     const response = await this.get('countries');
     return response.map((obj) => {
-      return {...obj, datereadable: new Date(obj.updated).toDateString()};
+      return { ...obj, datereadable: new Date(obj.updated).toDateString() };
     });
   }
 
   async getCountrybyID(id) {
     const response = await this.get(`countries/${id}`);
-    return {...response, datereadable: new Date(response.updated).toDateString()};
+    return {
+      ...response,
+      datereadable: new Date(response.updated).toDateString(),
+    };
   }
 
   async getCountryByName(name) {
     const response = await this.get(`countries/${name}?strict=false`);
-    return {...response, datereadable: new Date(response.updated).toDateString()};
+    return {
+      ...response,
+      datereadable: new Date(response.updated).toDateString(),
+    };
   }
 
   async getTimeLinebyCountry2(countryInfo) {
@@ -73,7 +82,7 @@ class NovelCovidAPI extends RESTDataSource {
     // .catch(await this.get(`historical/${countryInfo._id}?lastdays=all`))
     // .catch(
     // console.log(response);
-    const {cases, deaths, recovered} = response.timeline;
+    const { cases, deaths, recovered } = response.timeline;
     const result = Object.keys(cases).map((date) => ({
       date: new Date(date).getTime(),
       datereadable: new Date(date).toDateString(),
@@ -86,11 +95,7 @@ class NovelCovidAPI extends RESTDataSource {
   }
   async getTimeLinebyCountry(countryInfo) {
     // console.log(countryInfo.iso3);
-    const potentialIds = [
-      countryInfo._id,
-      countryInfo.iso3,
-      countryInfo.iso2,
-    ];
+    const potentialIds = [countryInfo._id, countryInfo.iso3, countryInfo.iso2];
 
     let response = Object();
     for (const index of potentialIds) {
@@ -103,12 +108,12 @@ class NovelCovidAPI extends RESTDataSource {
       }
     }
 
-    if (Object.keys(response).length===0) {
+    if (Object.keys(response).length === 0) {
       return [];
     }
 
     // console.log(response);
-    const {cases, deaths, recovered} = response.timeline;
+    const { cases, deaths, recovered } = response.timeline;
     const result = Object.keys(cases).map((date) => ({
       date: new Date(date).getTime(),
       datereadable: new Date(date).toDateString(),
@@ -124,27 +129,29 @@ class NovelCovidAPI extends RESTDataSource {
     // /Everything from this API comes from the USA
     const response = await this.get('states/');
     return response.map((state) => {
-      return {...state, 'parentcountry': 'USA'};
+      return { ...state, parentcountry: 'USA' };
     });
   }
 
   async getStatebyName(name) {
     // /Everything from this API comes from the USA
     const res = await this.get(`states/${name}`);
-    return {...res, 'parentcountry': 'USA'};
+    return { ...res, parentcountry: 'USA' };
   }
 
   async getTimeLinebyState(name) {
     const response = await this.get('nyt/states');
-    return response.filter((states) => {
-      return states.state === name;
-    }).map((filtered) => {
-      return {
-        ...filtered,
-        date: new Date(filtered.date).getTime(),
-        datereadable: new Date(filtered.date).toDateString(),
-      };
-    });
+    return response
+      .filter((states) => {
+        return states.state === name;
+      })
+      .map((filtered) => {
+        return {
+          ...filtered,
+          date: new Date(filtered.date).getTime(),
+          datereadable: new Date(filtered.date).toDateString(),
+        };
+      });
   }
 
   async getYesterday(name) {
@@ -154,7 +161,8 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   reduceCounty(key) {
-    return {statename: key.province,
+    return {
+      statename: key.province,
       cummulativeCases: key.stats.confirmed,
       cummulativeDeaths: key.stats.deaths,
       cummulativeRecovered: key.stats.recovered,
@@ -165,9 +173,9 @@ class NovelCovidAPI extends RESTDataSource {
         name: key.county,
         statename: key.province,
       },
-      ...key};
+      ...key,
+    };
   }
-
 
   async getCounties() {
     const response = await this.get('jhucsse/counties');
@@ -188,22 +196,24 @@ class NovelCovidAPI extends RESTDataSource {
     // console.log(reducedResponse);
   }
 
-
   async getCountyTimeLineByState(county) {
     console.log(county.statename);
     const stateName = county.statename.toLowerCase();
     const response = await this.get(`historical/usacounties/${stateName}`);
-    const filtedResponse = response.filter((key) => key.county === county.county.toLowerCase());
+    const filtedResponse = response.filter(
+      (key) => key.county === county.county.toLowerCase()
+    );
     console.log(filtedResponse);
     // recovered on found in the counties, we should find a way to check that
-    const {cases, deaths, recovered} = filtedResponse[0].timeline;
-    console.log(cases);
+    const { cases, deaths, recovered } = filtedResponse[0].timeline;
+    // console.log(cases);
     const result = Object.keys(cases).map((date) => {
       const dataObject = {
         date: new Date(date).getTime(),
         datereadable: new Date(date).toDateString(),
         cases: cases[date],
-        deaths: deaths[date]};
+        deaths: deaths[date],
+      };
       if (recovered != undefined) {
         dataObject.recovered = recovered[date];
       } else {
@@ -216,9 +226,4 @@ class NovelCovidAPI extends RESTDataSource {
   // }
 }
 
-// I think that maybe these should not be async functions since
-// some of them don't return promises and we resolve them in the RESTAPI
-// while this probably doesn't matter, I just want to be a good programmer
-
-
-module.exports = {resolvers, NovelCovidAPI, CSVAPI};
+module.exports = { NovelCovidAPI, CSVAPI };
