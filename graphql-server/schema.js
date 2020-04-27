@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 const typeDefs = gql`
   scalar Date
   directive @resolveAs(name: String) on FIELD_DEFINITION
@@ -14,6 +14,7 @@ const typeDefs = gql`
     StateByNames(names: [String]!): State!
     AllCounties: [County]!
     CountyByName(name: String!, state: String!): County!
+    CountyByNames(names: [String]!, states: [String]!): [County]!
   }
 
   type Country {

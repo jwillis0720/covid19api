@@ -41,5 +41,25 @@ const queryObject = {
     }
     return countyByName[0];
   },
+  CountyByNames: async (_parent, { names, states }, { dataSources }) => {
+    ///this is tricky since we are returning an array of promises
+    ///see here https://medium.com/@antonioval/making-array-iteration-easy-when-using-async-await-6315c3225838
+    if (names.length != states.length) {
+      throw new Error(`${states},${names}  must be same length`);
+    }
+    const results = names.map(async (name, index) => {
+      let state = states[index];
+      let countyByName = await dataSources.ncapi.getCountyByName(name, state);
+      if (countyByName.length > 1) {
+        throw new Error(`${state},${name} returns ambiguous query`);
+      }
+      if (countyByName[0] === undefined) {
+        console.error(`${state},${name} returns nothing`);
+        // throw new Error(`${state},${name} returns nothing`);
+      }
+      return countyByName[0];
+    });
+    return await Promise.all(results);
+  },
 };
 module.exports = queryObject;

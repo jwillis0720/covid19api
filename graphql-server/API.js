@@ -1,22 +1,22 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
-const { RESTDataSource } = require('apollo-datasource-rest');
+const { RESTDataSource } = require("apollo-datasource-rest");
 class CSVAPI extends RESTDataSource {
   constructor() {
     super();
     // need to put this on a CDN
     this.baseURL =
-      'https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/';
+      "https://raw.githubusercontent.com/jwillis0720/covid19api/graphql/graphql-server/locationInfo/";
   }
 
   async getCountryInfo(countryInfo) {
-    const response = await this.get('CountryInfo.json');
+    const response = await this.get("CountryInfo.json");
     const JSONResponse = JSON.parse(response);
     const iso3 = countryInfo.iso3;
     const iso2 = countryInfo.iso2;
     const filteredResponse = JSONResponse.filter((key) => {
       // console.log(key.iso_a3);
-      return key['iso_a3'] === iso3;
+      return key["iso_a3"] === iso3;
     });
     if (filteredResponse.length > 1) {
       throw new Error(`${countryInfo},returns ambiguous for info query`);
@@ -24,11 +24,11 @@ class CSVAPI extends RESTDataSource {
     return filteredResponse[0];
   }
   async getStateInfo() {
-    const response = await this.get('StateInfoPop.json');
+    const response = await this.get("StateInfoPop.json");
     return JSON.parse(response);
   }
   async getCountyInfo(countyInfo) {
-    const response = await this.get('CountyInfo.json');
+    const response = await this.get("CountyInfo.json");
     const responseJSON = JSON.parse(response);
     let filtedResponse = [];
     filtedResponse = responseJSON
@@ -49,11 +49,11 @@ class CSVAPI extends RESTDataSource {
 class NovelCovidAPI extends RESTDataSource {
   constructor() {
     super();
-    this.baseURL = 'https://corona.lmao.ninja/v2/';
+    this.baseURL = "https://corona.lmao.ninja/v2/";
   }
 
   async getCountries() {
-    const response = await this.get('countries');
+    const response = await this.get("countries");
     return response.map((obj) => {
       return { ...obj, datereadable: new Date(obj.updated).toDateString() };
     });
@@ -137,20 +137,20 @@ class NovelCovidAPI extends RESTDataSource {
 
   async getStates() {
     // /Everything from this API comes from the USA
-    const response = await this.get('states/');
+    const response = await this.get("states/");
     return response.map((state) => {
-      return { ...state, parentcountry: 'USA' };
+      return { ...state, parentcountry: "USA" };
     });
   }
 
   async getStatebyName(name) {
     // /Everything from this API comes from the USA
     const res = await this.get(`states/${name}`);
-    return { ...res, parentcountry: 'USA' };
+    return { ...res, parentcountry: "USA" };
   }
 
   async getTimeLinebyState(name) {
-    const response = await this.get('nyt/states');
+    const response = await this.get("nyt/states");
     return response
       .filter((states) => {
         return states.state === name;
@@ -188,7 +188,7 @@ class NovelCovidAPI extends RESTDataSource {
   }
 
   async getCounties() {
-    const response = await this.get('jhucsse/counties');
+    const response = await this.get("jhucsse/counties");
     const counties = response.map((key) => {
       return this.reduceCounty(key);
     });
@@ -231,7 +231,7 @@ class NovelCovidAPI extends RESTDataSource {
       }
       return dataObject;
     });
-    return result;
+    return await result;
   }
   // }
 }
