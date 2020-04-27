@@ -1,15 +1,32 @@
 const stateObject = {
   timeline: async (state, _, { dataSources }) => {
-    const stateTimeLine = await dataSources.ncapi.getTimeLinebyState(
-      state.state
-    );
+    let stateTimeLine = await dataSources.ncapi.getTimeLinebyState(state.state);
     const daterequested = state.daterequested;
-    if (daterequested === undefined) {
-      return stateTimeLine;
+    if (daterequested != undefined) {
+      //because these are updated with local times we have to convert the datereadable bakc into a time
+      stateTimeLine = stateTimeLine.filter((key) => {
+        return new Date(key.datereadable).getTime() == daterequested.getTime();
+      });
     }
-    //because these are updated with local times we have to convert the datereadable bakc into a time
-    return stateTimeLine.filter((key) => {
-      return new Date(key.datereadable).getTime() == daterequested.getTime();
+
+    ///lets hamefisttedly add a stateobject to the timeline too
+    const stateName = state.state;
+    const stateObj = await dataSources.csv.getStateInfo();
+    const filteredStateObj = stateObj.filter(
+      (obj) => obj.State.toLowerCase() === stateName.toLowerCase()
+    );
+    if (filteredStateObj.length > 1) {
+      throw new Error(`${state},returns ambiguous for info query`);
+    }
+    const mappedObj = {
+      lat: filteredStateObj[0].Latitude,
+      lon: filteredStateObj[0].Longitude,
+      population: filteredStateObj[0].pop,
+      landarea: filteredStateObj[0].LandAreami2,
+    };
+
+    return stateTimeLine.map((obj) => {
+      return { stateinfo: mappedObj, ...obj };
     });
   },
   yesterdayCases: async (state, _, { dataSources }) => {
@@ -33,9 +50,7 @@ const stateObject = {
   },
   info: async (state, _, { dataSources }) => {
     const stateName = state.state;
-    const stateObj = await dataSources.csv
-      .getStateInfo()
-      .then((info) => JSON.parse(info));
+    const stateObj = await dataSources.csv.getStateInfo();
     const filteredStateObj = stateObj.filter(
       (obj) => obj.State.toLowerCase() === stateName.toLowerCase()
     );

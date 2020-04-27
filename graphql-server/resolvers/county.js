@@ -7,7 +7,7 @@ const countyObject = {
       county
     );
     const daterequested = county.daterequested;
-    console.log(countyTimeLine);
+    // console.log(countyTimeLine);
     if (daterequested === undefined) {
       return countyTimeLine;
     }

@@ -107,7 +107,7 @@ const typeDefs = gql`
     deaths: Int
     recovered: Int
     fips: Int
-    countryInfo: CountryInfo
+    stateinfo: StateInfo
   }
 `;
 module.exports = typeDefs;
