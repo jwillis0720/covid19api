@@ -16,16 +16,26 @@ const queryObject = {
     return names.map((name) => dataSources.ncapi.getCountryByName(name));
   },
 
+  CountryByDate: async (_, { name, date }, { dataSources }) => {
+    const countryObject = await dataSources.ncapi.getCountryByName(name);
+    return { daterequested: date, ...countryObject };
+  },
+
   AllStates: (_parent, _args, { dataSources }) => {
     return dataSources.ncapi.getStates();
   },
   StateByName: (_parent, { name }, { dataSources }) => {
-    // console.log(name)
+    console.log(name);
     return dataSources.ncapi.getStatebyName(name);
   },
   StateByNames: (_parent, { names }, { dataSources }) => {
     // console.log(name)
     return names.map((name) => dataSources.ncapi.getStatebyName(name));
+  },
+  StateByDate: async (_, { name, date }, { dataSources }) => {
+    const stateObject = await dataSources.ncapi.getStatebyName(name);
+    // console.log(name, date.getTime());
+    return { daterequested: date, ...stateObject };
   },
   AllCounties: (_parent, _args, { dataSources }) => {
     return dataSources.ncapi.getCounties();
@@ -60,6 +70,14 @@ const queryObject = {
       return countyByName[0];
     });
     return await Promise.all(results);
+  },
+  CountyByDate: async (_, { name, state, date }, { dataSources }) => {
+    const countyByName = await dataSources.ncapi.getCountyByName(name, state);
+    // console.log(name, countyByName);
+    if (countyByName.length > 1) {
+      throw new Error(`${state},${name} returns ambiguous query`);
+    }
+    return { daterequested: date, ...countyByName[0] };
   },
 };
 module.exports = queryObject;

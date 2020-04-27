@@ -75,34 +75,6 @@ class NovelCovidAPI extends RESTDataSource {
     };
   }
 
-  async getTimeLinebyCountry2(countryInfo) {
-    // console.log(countryInfo.iso3);
-    let response = [];
-    try {
-      response = await this.get(`historical/${countryInfo.iso3}?lastdays=all`);
-    } catch (err) {
-      console.error(`iso3 ${countryInfo.iso3} failed, trying _id`);
-      try {
-        response = await this.get(`historical/${countryInfo._id}?lastdays=all`);
-      } catch (err) {
-        console.error(`error with _id- ${countryInfo._id} returning nothing`);
-        return response;
-      }
-    }
-    // .catch(await this.get(`historical/${countryInfo._id}?lastdays=all`))
-    // .catch(
-    // console.log(response);
-    const { cases, deaths, recovered } = response.timeline;
-    const result = Object.keys(cases).map((date) => ({
-      date: new Date(date).getTime(),
-      datereadable: new Date(date).toDateString(),
-      cases: cases[date],
-      deaths: deaths[date],
-      recovered: recovered[date],
-      countryInfo: [countryInfo],
-    }));
-    return result;
-  }
   async getTimeLinebyCountry(countryInfo) {
     // console.log(countryInfo.iso3);
     const potentialIds = [countryInfo._id, countryInfo.iso3, countryInfo.iso2];

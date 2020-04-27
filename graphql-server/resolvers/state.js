@@ -1,6 +1,16 @@
 const stateObject = {
   timeline: async (state, _, { dataSources }) => {
-    return dataSources.ncapi.getTimeLinebyState(state.state);
+    const stateTimeLine = await dataSources.ncapi.getTimeLinebyState(
+      state.state
+    );
+    const daterequested = state.daterequested;
+    if (daterequested === undefined) {
+      return stateTimeLine;
+    }
+    //because these are updated with local times we have to convert the datereadable bakc into a time
+    return stateTimeLine.filter((key) => {
+      return new Date(key.datereadable).getTime() == daterequested.getTime();
+    });
   },
   yesterdayCases: async (state, _, { dataSources }) => {
     const response = await dataSources.ncapi.getYesterday(state.state);

@@ -9,12 +9,15 @@ const typeDefs = gql`
     CountryByIDs(ids: [Int]!): [Country]!
     CountryByName(name: String!): Country!
     CountryByNames(names: [String]!): [Country]!
+    CountryByDate(name: String!, date: Date!): Country!
     AllStates: [State]!
     StateByName(name: String!): State!
     StateByNames(names: [String]!): State!
+    StateByDate(name: String!, date: Date!): State!
     AllCounties: [County]!
     CountyByName(name: String!, state: String!): County!
     CountyByNames(names: [String]!, states: [String]!): [County]!
+    CountyByDate(name: String!, state: String!, date: Date!): County!
   }
 
   type Country {

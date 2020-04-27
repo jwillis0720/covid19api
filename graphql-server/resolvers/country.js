@@ -1,7 +1,15 @@
 const countryObject = {
   timeline: async (country, _, { dataSources }) => {
     const countryInfo = country.countryInfo;
-    return dataSources.ncapi.getTimeLinebyCountry(countryInfo);
+    const daterequested = country.daterequested;
+    const timeLine = await dataSources.ncapi.getTimeLinebyCountry(countryInfo);
+    if (daterequested === undefined) {
+      return timeLine;
+    } else {
+      const miliseconds = daterequested.getTime();
+      return timeLine.filter((key) => key.date === miliseconds);
+      // return timeLine.filter((key) => key.date === miliseconds);
+    }
   },
   state: async (country, _, { dataSources }) => {
     // right here we only have USA
