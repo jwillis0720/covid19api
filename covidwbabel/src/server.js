@@ -1,8 +1,9 @@
-const { ApolloServer } = require("apollo-server");
-const { resolveAs } = require("graphql-directive-resolve-as");
-const { NovelCovidAPI, CSVAPI } = require("./api");
-const { resolvers } = require("./resolvers/resolvers");
-const typeDefs = require("./schema");
+import { ApolloServer } from "apollo-server";
+import { typeDefs } from "./schema";
+import { resolvers } from "./resolvers/resolvers";
+import { resolveAs } from "graphql-directive-resolve-as";
+import { NovelCovidAPI, CSVAPI } from "./api";
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
