@@ -240,3 +240,12 @@ country_centroids_az8.238,POINT (47.5867618877 15.9092800505),237,1,Admin-0 coun
 country_centroids_az8.239,POINT (25.0839009251 -29.0003409534),238,1,Admin-0 country,2,South Africa,ZAF,0,2,Sovereign country,South Africa,ZAF,0,South Africa,ZAF,0,South Africa,ZAF,0,South Africa,South Africa,ZAF,South Africa,,S.Af.,ZA,Republic of South Africa,,,,South Africa,,2,3,4,2,49052489,491000,-99,2001,-99,5. Emerging region: G20,3. Upper middle income,-99,,ZA,ZAF,710,710,ZA,ZAF,-99,ZAF,ZAF,-99,-99,Africa,Africa,Southern Africa,Sub-Saharan Africa,12,12,5,-99,1,25.08390093,-29.00034095
 country_centroids_az8.240,POINT (27.7747594637 -13.4582415186),239,1,Admin-0 country,3,Zambia,ZMB,0,2,Sovereign country,Zambia,ZMB,0,Zambia,ZMB,0,Zambia,ZMB,0,Zambia,Zambia,ZMB,Zambia,,Zambia,ZM,Republic of Zambia,,,,Zambia,,5,8,5,13,11862740,17500,-99,2010,-99,7. Least developed region,4. Lower middle income,-99,,ZM,ZMB,894,894,ZM,ZMB,-99,ZMB,ZMB,-99,-99,Africa,Africa,Eastern Africa,Sub-Saharan Africa,6,6,6,-99,1,27.77475946,-13.45824152
 country_centroids_az8.241,POINT (29.8514412019 -19.0042041882),240,1,Admin-0 country,3,Zimbabwe,ZWE,0,2,Sovereign country,Zimbabwe,ZWE,0,Zimbabwe,ZWE,0,Zimbabwe,ZWE,0,Zimbabwe,Zimbabwe,ZWE,Zimbabwe,,Zimb.,ZW,Republic of Zimbabwe,,,,Zimbabwe,,1,5,3,9,12619600,9323,0,2002,0,5. Emerging region: G20,5. Low income,-99,,ZW,ZWE,716,716,ZW,ZWE,-99,ZWE,ZWE,-99,-99,Africa,Africa,Eastern Africa,Sub-Saharan Africa,8,8,5,-99,1,29.8514412,-19.00420419
+,,,,,,RŽunion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,859959,,,,,,,,,,REU,,,,,,,,,,,,,,,,,,,,
+,,,,,,Mayotte,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,270372,,,,,,,,,,MYT,,,,,,,,,,,,,,,,,,,,
+,,,,,,Martinique,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,376480,,,,,,,,,,MTQ,,,,,,,,,,,,,,,,,,,,
+,,,,,,MS Zaandam,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,1432,,,,,,,,,,MSZ,,,,,,,,,,,,,,,,,,,,
+,,,,,,Guadeloupe,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,395700,,,,,,,,,,GLP,,,,,,,,,,,,,,,,,,,,
+,,,,,,Gibraltar,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,33718Ê,,,,,,,,,,GIB,,,,,,,,,,,,,,,,,,,,
+,,,,,,French Guiana,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,290691,,,,,,,,,,GUF,,,,,,,,,,,,,,,,,,,,
+,,,,,,Diamond Princess,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,3711,,,,,,,,,,DMP,,,,,,,,,,,,,,,,,,,,
+,,,,,,Caribbean Netherlands,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,25987,,,,,,,,,,BES,,,,,,,,,,,,,,,,,,,,
