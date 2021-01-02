@@ -3,3 +3,7 @@ graphql-server/node_modules/
 graphql-server/sandbox/queries.gql
 graphql-server/locationInfo/.ipynb_checkpoints/Untitled-checkpoint.ipynb
 graphql-server/locationInfo/Untitled.ipynb
+workspace.code-workspace
+.vscode/settings.json
+.ipynb_check
+.ipynb_checkpoints
